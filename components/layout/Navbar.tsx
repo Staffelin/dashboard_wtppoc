@@ -3,7 +3,7 @@
 import { useSession } from '@/hooks/useSession'
 import { Button } from '@/components/ui/button'
 import { LogOut, Bell, User, Clock, BarChart, Volume2, VolumeX } from 'lucide-react'
-import Link from 'next/link'
+import useAlarmSound from '@/hooks/useAlarmSound'
 import { useState, useEffect } from 'react'
 
 interface NavbarProps {
@@ -15,6 +15,12 @@ interface NavbarProps {
 export default function Navbar({ hasWarning, alarmEnabled, onAlarmToggle }: NavbarProps) {
   const { user, logout } = useSession()
   const [currentTime, setCurrentTime] = useState<Date | null>(null)
+  const { enabled, enable, disable } = useAlarmSound()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
   const updateTime = () => setCurrentTime(new Date())
@@ -42,6 +48,27 @@ export default function Navbar({ hasWarning, alarmEnabled, onAlarmToggle }: Navb
 
           {/* Right side */}
           <div className="flex items-center gap-4">
+
+            <div className="flex items-center gap-2 p-2 bg-red-100/50 rounded-xl border border-red-200 animate-pulse">
+                <Bell className="h-5 w-5 text-red-600" />
+                <span className="text-sm font-bold text-red-800">CRITICAL ALERT</span>
+                <Button 
+                  size="sm" 
+                  variant={mounted && enabled ? "default" : "outline"}
+                  onClick={enabled ? disable : enable}
+                  className="ml-2 h-8"
+                >
+                  {mounted && enabled ? (
+                    <Volume2 className="h-4 w-4"/>
+                  ) : (
+                    <VolumeX className="h-4 w-4"/>
+                  )}
+                  <span className="ml-1">
+                    {mounted && enabled ? 'ON' : 'OFF'}
+                  </span>
+                </Button>
+              </div>
+              
 
             {/* Critical Alert */}
             {hasWarning && (
