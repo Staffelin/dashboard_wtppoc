@@ -8,7 +8,7 @@ export function useSensorHistory(from: string, to: string) {
     queryKey: ["sensors", "history", from, to],
     queryFn: () => fetchSensorHistory({ from, to }),
     enabled: Boolean(from && to),
-    staleTime: 1000 * 60, // 1 minute
+    staleTime: 2000 * 60, // 2 minute
     refetchOnWindowFocus: false,
   })
 }
